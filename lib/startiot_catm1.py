@@ -1,5 +1,5 @@
 from network import LTE
-import time
+import usocket as socket
 import re
 import machine
 import utime
@@ -36,31 +36,31 @@ class StartIot():
         self.send_at_cmd_pretty('AT+CGDCONT=1,"IP","mda.ee"')
         self.send_at_cmd_pretty('AT+CFUN=1')
         self.send_at_cmd_pretty('AT+CSQ')
-        print("Wait 5 seconds...")
-        # Waiting 12 seconds
-
-        timer_start = utime.ticks_ms()
-        while 0==0:
-            if (utime.ticks_ms() - timer_start) > 5000:
-                break
-            machine.idle()
-
-        self.send_at_cmd_pretty('AT+CSQ')
-        print("Wait 5 seconds...")
-        # Waiting 12 seconds
-
-        timer_start = utime.ticks_ms()
-        while 0==0:
-            if (utime.ticks_ms() - timer_start) > 5000:
-                break
-            machine.idle()
-        self.send_at_cmd_pretty('AT+CEREG?')
+        # print("Wait 5 seconds...")
+        # # Waiting 12 seconds
+        #
+        # timer_start = utime.ticks_ms()
+        # while 0==0:
+        #     if (utime.ticks_ms() - timer_start) > 5000:
+        #         break
+        #     machine.idle()
+        #
+        # self.send_at_cmd_pretty('AT+CSQ')
+        # print("Wait 5 seconds...")
+        # # Waiting 12 seconds
+        #
+        # timer_start = utime.ticks_ms()
+        # while 0==0:
+        #     if (utime.ticks_ms() - timer_start) > 5000:
+        #         break
+        #     machine.idle()
+        # self.send_at_cmd_pretty('AT+CEREG?')
 
 
         print ("Waiting for attachement...")
         timer_start = utime.ticks_ms()
         while not self.lte.isattached():
-            if (utime.ticks_ms() - timer_start) > 60000:
+            if (utime.ticks_ms() - timer_start) > 120000:
                 machine.reset()
             machine.idle()
         else:
@@ -82,8 +82,8 @@ class StartIot():
 
     # OPEN SOCKET AND SEND DATA
     def send(self, data):
-        if not self.lte.isconnected():
-            raise Exception('NOT CONNECTED')
+        # if not self.lte.isconnected():
+        #     raise Exception('NOT CONNECTED')
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         IP_address = socket.getaddrinfo('172.16.15.14', 1234)[0][-1]
