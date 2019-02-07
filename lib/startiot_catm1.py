@@ -8,15 +8,12 @@ import pycom
 class StartIot():
 
     def __init__(self):
-        print("self.lte = LTE()...")
         self.lte = LTE()
-        print("Call initModem ...")
         self.initModem()
 
 
     # METHOD FOR PRETTY PRINTING AT COMMANDS
     def send_at_cmd_pretty(self, cmd):
-        print("Sending: " + cmd)
         response = self.lte.send_at_cmd(cmd)
         if response != None:
             lines=response.split('\r\n')
@@ -36,60 +33,34 @@ class StartIot():
         self.send_at_cmd_pretty('AT+CGDCONT=1,"IP","mda.ee"')
         self.send_at_cmd_pretty('AT+CFUN=1')
         self.send_at_cmd_pretty('AT+CSQ')
-        # print("Wait 5 seconds...")
-        # # Waiting 12 seconds
-        #
-        # timer_start = utime.ticks_ms()
-        # while 0==0:
-        #     if (utime.ticks_ms() - timer_start) > 5000:
-        #         break
-        #     machine.idle()
-        #
-        # self.send_at_cmd_pretty('AT+CSQ')
-        # print("Wait 5 seconds...")
-        # # Waiting 12 seconds
-        #
-        # timer_start = utime.ticks_ms()
-        # while 0==0:
-        #     if (utime.ticks_ms() - timer_start) > 5000:
-        #         break
-        #     machine.idle()
-        # self.send_at_cmd_pretty('AT+CEREG?')
 
-
-        print ("Waiting for attachement...")
+        print ("Waiting for attachement (To Radio Access Network)...")
         timer_start = utime.ticks_ms()
         while not self.lte.isattached():
             if (utime.ticks_ms() - timer_start) > 120000:
                 machine.reset()
             machine.idle()
         else:
-            print ("Attached, send AT+CGDCONT? to see the IP address")
-            self.send_at_cmd_pretty('AT+CGDCONT?')
-            self.send_at_cmd_pretty('AT+CEREG?')
+            print ("Attached (To Radio Access Network)...")
 
     # CONNECT TO THE NETWORK
     def connect(self):
         if not self.lte.isattached():
             raise Exception('NOT ATTACHED... call initModem() first')
-        print ("Waiting for connection...")
-        self.send_at_cmd_pretty('AT+CEREG?')
+        print ("Waiting for connection (To IP network)...")
         self.lte.connect()
         # Wait until we get connected to network
         while not self.lte.isconnected():
             machine.idle()
-        print ("Connected!")
+        print ("Connected (To IP network)!")
 
     # OPEN SOCKET AND SEND DATA
     def send(self, data):
-        # if not self.lte.isconnected():
-        #     raise Exception('NOT CONNECTED')
-
+        if not self.lte.isconnected():
+            raise Exception('NOT CONNECTED')
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         IP_address = socket.getaddrinfo('172.16.15.14', 1234)[0][-1]
-        print ("IP address: ", IP_address)
         s.connect(IP_address)
-        print ("data is: ", data)
         s.send(data)
         s.close()
 
