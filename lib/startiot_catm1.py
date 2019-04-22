@@ -30,6 +30,12 @@ class StartIot():
     def initModem(self):
         print ("Starting modem...")
         self.send_at_cmd_pretty('AT+CFUN=0')
+        # Change this if you are using the NB1 network (uncomment the next 4 lines)
+        #self.send_at_cmd_pretty('AT+CEMODE=0')
+        #self.send_at_cmd_pretty('AT+CEMODE?')
+        #self.send_at_cmd_pretty('AT!="clearscanconfig"')
+        #self.send_at_cmd_pretty('AT!="addscanfreq band=20 dl-earfcn=6352"')
+        # End change this ....
         self.send_at_cmd_pretty('AT+CGDCONT=1,"IP","mda.ee"')
         self.send_at_cmd_pretty('AT+CFUN=1')
         self.send_at_cmd_pretty('AT+CSQ')
