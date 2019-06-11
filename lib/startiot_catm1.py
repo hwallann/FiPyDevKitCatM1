@@ -4,6 +4,7 @@ import re
 import machine
 import utime
 import pycom
+import time
 
 class StartIot():
 
@@ -41,11 +42,8 @@ class StartIot():
         self.send_at_cmd_pretty('AT+CSQ')
 
         print ("Waiting for attachement (To Radio Access Network)...")
-        timer_start = utime.ticks_ms()
         while not self.lte.isattached():
-            if (utime.ticks_ms() - timer_start) > 120000:
-                machine.reset()
-            machine.idle()
+            time.sleep(0.25)
         else:
             print ("Attached (To Radio Access Network)...")
 
