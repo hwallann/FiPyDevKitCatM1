@@ -15,7 +15,8 @@ def run():
             tmp = ((uos.urandom(1)[0] / 256) * 10) + 20
             hum = ((uos.urandom(1)[0] / 256) * 10) + 60
             # return JSON.parse(payload.toString("utf-8")); as Uplink transform
-            msg = '{"temperature":"'+ str(tmp) + '", "humidity": "'+ str(hum) + '", "latlng": "69.681812, 18.988209"}'
+            # '{"temperature":"'+ str(tmp) + '", "humidity": "'+ str(hum) + '", "latlng": "69.681812, 18.988209"}'
+            msg = str(tmp) + ','+ str(hum) + ',' + "69.681812, 18.988209"
             print(msg)
             startIoT.send(msg)
         except Exception as e:
@@ -25,5 +26,9 @@ def run():
 
         time.sleep(30)
 
-print('Run the example code...')
-run()
+while True:
+    print('Run the example code...')
+    try:
+        run()
+    except OSError:
+        time.sleep(5)
